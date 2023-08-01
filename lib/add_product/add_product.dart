@@ -40,12 +40,15 @@ class _AddProductState extends State<AddProduct> {
             ),
             AppSizes.height10,
             CustomTextField(
+<<<<<<< HEAD
               prefixIcon: const Center(child: Icon(Icons.photo_camera)),
               controller: _description,
               maxLines: 5,
             ),
             AppSizes.height10,
             CustomTextField(
+=======
+>>>>>>> 43e287a761c1d6bf83bf39e90c1dc83637bd4101
               hintext: 'name',
               controller: _name,
             ),
