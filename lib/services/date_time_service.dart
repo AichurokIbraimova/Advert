@@ -9,13 +9,18 @@ class DateTimeService {
         builder: (BuildContext builder) {
           return Container(
             height: MediaQuery.of(context).copyWith().size.height * 0.25,
-            color: Colors.white,
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10))),
             child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                onDateTimeChanged: onDateTimeChanged,
-                initialDateTime: DateTime.now(),
-                minimumYear: 2000,
-                maximumYear: 2025),
+              mode: CupertinoDatePickerMode.date,
+              onDateTimeChanged: onDateTimeChanged,
+              initialDateTime: DateTime.now(),
+              minimumYear: 2000,
+              maximumYear: 2025,
+            ),
           );
         });
   }
