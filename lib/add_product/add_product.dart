@@ -1,12 +1,14 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:advert/components/custom_text_field.dart';
 import 'package:advert/constants/app_sizes.dart';
+import 'package:advert/models/information.dart';
 import 'package:advert/services/date_time_service.dart';
 import 'package:advert/services/image_picker_service.dart';
+import 'package:advert/services/loading_service.dart';
 import 'package:advert/services/storage_service.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:advert/services/store_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -50,7 +52,7 @@ class _AddProductState extends State<AddProduct> {
             ),
             AppSizes.height10,
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               height: 300,
               width: double.infinity,
               decoration: BoxDecoration(
@@ -111,64 +113,26 @@ class _AddProductState extends State<AddProduct> {
             ),
             ElevatedButton.icon(
                 onPressed: () async {
-                  await StorageSevice().uploadImages(images!);
+                  LoadingService().showLoading(context);
+                  final urls = await StorageSevice().uploadImages(images!);
+                  final information = Information(
+                    title: _title.text,
+                    description: _description.text,
+                    name: _name.text,
+                    dateTime: _dateTime.text,
+                    phoneNumber: _phoneNumber.text,
+                    address: _address.text,
+                    image: urls,
+                  );
+                  await StoreService().informationSave(information);
+                  // ignore: use_build_context_synchronously
+                  Navigator.popUntil(context, (route) => route.isFirst);
                 },
                 icon: const Icon(Icons.publish),
                 label: const Text('Маалыматты жонотуу'))
           ],
         ),
       ),
-    );
-  }
-}
-
-class ImageContainer extends StatefulWidget {
-  ImageContainer({
-    super.key,
-  });
-
-  @override
-  State<ImageContainer> createState() => _ImageContainerState();
-}
-
-class _ImageContainerState extends State<ImageContainer> {
-  List<XFile> images = [];
-
-  final service = ImagePickerService();
-  @override
-  Widget build(BuildContext context) {
-    //var widget;
-    return Container(
-      padding: EdgeInsets.all(10),
-      height: 300,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey,
-        border: Border.all(),
-      ),
-      child: images.isNotEmpty
-          ? GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-              ),
-              children: images
-                  .map((e) => ItemCard(
-                        file: File(e.path),
-                      ))
-                  .toList(),
-            )
-          : IconButton(
-              onPressed: () async {
-                final value = await service.pickImages();
-                if (value != null) {
-                  images = value;
-                  setState(() {});
-                }
-              },
-              icon: const Icon(Icons.photo_camera),
-              color: Colors.black,
-            ),
     );
   }
 }
